@@ -18,4 +18,16 @@ const createUser = async (req, res) => {
         res.status(500).json({errorMessage:error.message})
     }
 }
-module.exports = createUser;
+
+const displayUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(400).json({message:"No users exist"})
+    }
+}
+module.exports = {
+    createUser,
+    displayUsers
+};
