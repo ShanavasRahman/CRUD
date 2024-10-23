@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const userRoute = require('./routes/userRoute');
 
 app.use(express.json());
 
@@ -19,9 +20,11 @@ mongoose
         console.log("DB connected successfully");
 
         app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
+            console.log(`Server is running on http://localhost:${PORT}`);
         });
     })
     .catch((error) => {
         console.error("DB connection failed:", error);
     });
+
+app.use('/api', userRoute);

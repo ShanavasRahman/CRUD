@@ -18,3 +18,4 @@ const createUser = async (req, res) => {
         res.status(500).json({errorMessage:error.message})
     }
 }
+module.exports = createUser;
