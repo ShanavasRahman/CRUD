@@ -10,9 +10,6 @@ dotenv.config();
 
 const PORT = process.env.PORT || 7000;
 const MONGO_URL = process.env.MONGO_URL;
-app.get('/', (req, res) => {
-    res.send("Hello world");
-})
 
 mongoose
     .connect(MONGO_URL)
