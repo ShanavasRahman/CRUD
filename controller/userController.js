@@ -60,10 +60,11 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const { email } = req.body;
-    const userExist = await User.find({ email });
+    console.log(req.params.id);
+    const userExist = await User.findById(req.params.id);
+    console.log(userExist);
     if (userExist) {
-      const deletedUser = await User.deleteOne({ email });
+      const deletedUser = await User.findByIdAndDelete( req.params.id );
       return res.status(200).json({ deletedUser });
     } else {
       return res.status(404).json({ message: "user not found" });

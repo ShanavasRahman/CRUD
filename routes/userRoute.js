@@ -8,7 +8,7 @@ route.get("/users",displayUsers)
 
 route.post("/updateUser", updateUser);
 
-route.post("/deleteUser", deleteUser);
+route.post("/deleteUser/:id", deleteUser);
 
 route.get("/userId/:id", findUserById);
 
