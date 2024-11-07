@@ -6,9 +6,9 @@ route.post("/signup", createUser);
 
 route.get("/users",displayUsers)
 
-route.post("/updateUser", updateUser);
+route.put("/updateUser", updateUser);
 
-route.post("/deleteUser/:id", deleteUser);
+route.delete("/deleteUser/:id", deleteUser);
 
 route.get("/userId/:id", findUserById);
 
