@@ -1,12 +1,23 @@
 const User = require("../model/userModel");
+const bcrypt = require("bcryptjs");
+const dotenv = require('dotenv');
+const jwt = require('jsonwebtoken');
+const cookie = require('cookie-parser');
+dotenv.config();
 
 const createUser = async (req, res) => {
   try {
-    const { name, email, address } = req.body;
+    const { name, email, address, password, confirmPassword } = req.body;
+    if (password != confirmPassword) {
+      return res.status(400).json({ message: "Password mismatching" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(hashedPassword);
     const newUser = new User({
       name,
       email,
       address,
+      password:hashedPassword,
     });
     const userExist = await User.findOne({ email });
     if (userExist) {
@@ -18,6 +29,27 @@ const createUser = async (req, res) => {
     res.status(500).json({ errorMessage: error.message });
   }
 };
+
+
+const userLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const userExist = await User.findOne({email:email});
+    console.log(userExist)
+    if (userExist && bcrypt.compare(password, userExist.password)) {
+      const token = jwt.sign({id:userExist._id}, process.env.SECRET_KEY, { expiresIn: "1h" });
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 3600000,
+      })
+    }
+    res.status(200).json({message:"Login successful"})
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
 
 const findUserById = async (req, res) => {
   try {
@@ -77,4 +109,5 @@ module.exports = {
   updateUser,
   deleteUser,
   findUserById,
+  userLogin
 };
