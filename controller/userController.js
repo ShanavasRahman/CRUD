@@ -35,19 +35,28 @@ const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const userExist = await User.findOne({email:email});
-    console.log(userExist)
     if (userExist && bcrypt.compare(password, userExist.password)) {
-      const token = jwt.sign({id:userExist._id}, process.env.SECRET_KEY, { expiresIn: "1h" });
+      const token = jwt.sign({id:userExist._id}, process.env.SECRET_KEY, { expiresIn: "2m" });
       res.cookie("token", token, {
         httpOnly: true,
         secure: false,
-        maxAge: 3600000,
+        maxAge: 360000,
       })
     }
     res.status(200).json({message:"Login successful"})
   } catch (error) {
     console.log(error.message)
     res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+
+const userLogout = async (req, res) => {
+  try {
+    res.clearCookie('token', { httpOnly: true, secure: false });
+    res.status(200).json({ message: "Logout successfully" });
+  } catch (error) {
+    res.status(500).json({message:"internal server error"})
   }
 }
 
@@ -109,5 +118,6 @@ module.exports = {
   updateUser,
   deleteUser,
   findUserById,
-  userLogin
+  userLogin,
+  userLogout
 };

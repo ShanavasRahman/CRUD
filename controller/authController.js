@@ -1,14 +1,22 @@
-const cookie = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
+
+
+
 const auth = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
+      console.log("Executing authentication middleware");
+      console.log(req.cookies.token);
+      const token = req.cookies.token;
     if (!token) {
-      return res.status(403).json({ message: "Access denied" });
+      return res
+        .status(403)
+        .json({ message: "Access denied. No token provided." });
     }
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+      console.log(decoded);
     req.user = decoded;
     next();
   } catch (error) {
@@ -16,6 +24,8 @@ const auth = async (req, res, next) => {
       return res
         .status(403)
         .json({ message: "Token expired, please log in again" });
+    } else {
+      return res.status(403).json({ message: "Invalid token" });
     }
   }
 };
