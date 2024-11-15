@@ -31,13 +31,22 @@ const createUser = async (req, res) => {
 };
 
 
+const generateAccessToken = (payload) => {
+  return jwt.sign({ id: payload }, process.env.ACCESSTOKEN_SECRET_KEY, { expiresIn: "2m" });
+}
+
+const generateRefreshToken = (payload) => {
+  return jwt.sign({ id: payload }, process.env.REFRESHTOKEN_SECRET_KEY, { expiresIn: "7d" });
+}
+
+
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     const userExist = await User.findOne({email:email});
     if (userExist && bcrypt.compare(password, userExist.password)) {
-      const token = jwt.sign({id:userExist._id}, process.env.SECRET_KEY, { expiresIn: "2m" });
-      res.cookie("token", token, {
+      const accessToken=generateRefreshToken(userExist._id);
+      res.cookie("token", accessToken, {
         httpOnly: true,
         secure: false,
         maxAge: 360000,
