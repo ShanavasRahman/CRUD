@@ -7,16 +7,15 @@ dotenv.config();
 
 const createUser = async (req, res) => {
   try {
-    const { name, email, address, password, confirmPassword } = req.body;
+    const { name, email, password, confirmPassword } = req.body;
     if (password != confirmPassword) {
-      return res.status(400).json({ message: "Password mismatching" });
+      return res.status(400).json({ message: "Password Mismatching" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log(hashedPassword);
     const newUser = new User({
       name,
       email,
-      address,
       password:hashedPassword,
     });
     const userExist = await User.findOne({ email });
@@ -24,7 +23,7 @@ const createUser = async (req, res) => {
       return res.status(400).json({ message: "user already exist" });
     }
     const savedData = await newUser.save();
-    return res.status(200).json(savedData);
+    return res.status(200).json({savedData,message:"User logged in successfully"});
   } catch (error) {
     res.status(500).json({ errorMessage: error.message });
   }
@@ -45,8 +44,8 @@ const userLogin = async (req, res) => {
     const { email, password } = req.body;
     const userExist = await User.findOne({email:email});
     if (userExist && bcrypt.compare(password, userExist.password)) {
-      const accessToken=generateRefreshToken(userExist._id);
-      res.cookie("token", accessToken, {
+      const refreshToken=generateRefreshToken(userExist._id);
+      res.cookie("token", refreshToken, {
         httpOnly: true,
         secure: false,
         maxAge: 360000,
