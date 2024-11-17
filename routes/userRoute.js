@@ -17,7 +17,7 @@ route.post("/signup", createUser);
 
 route.get("/users", displayUsers);
 
-route.put("/updateuser", auth, updateUser);
+route.put("/updateuser", updateUser);
 
 route.delete("/deleteuser/:id", deleteUser);
 
